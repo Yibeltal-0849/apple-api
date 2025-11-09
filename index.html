@@ -2,7 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Load jQuery first -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Then load your custom.js -->
+    <script src="../Client_Side/src/commonResource/js/custom.js"></script>
 
     <title>Add iPhone</title>
     <link
@@ -31,21 +36,33 @@
         <h2>Add Products</h2>
         <label class="form-label" for="productname">Product Name</label>
         <input type="text" name="product_name" class="form-control" />
-        
+
         <label class="form-label" for="producturl">Product URL</label>
         <input type="text" name="product_url" class="form-control" />
       </div>
       <div class="col-md-6 form-section">
         <h2>Add Product Description</h2>
-        <label class="form-label" for="product_brief_description">Brief Description</label>
-        <textarea name="product_brief_description" class="form-control" rows="5"></textarea>
-        
-        <label class="form-label" for="product_description">Detailed Description</label>
-        <textarea name="product_description" class="form-control" rows="5"></textarea>
-        
+        <label class="form-label" for="product_brief_description"
+          >Brief Description</label
+        >
+        <textarea
+          name="product_brief_description"
+          class="form-control"
+          rows="5"
+        ></textarea>
+
+        <label class="form-label" for="product_description"
+          >Detailed Description</label
+        >
+        <textarea
+          name="product_description"
+          class="form-control"
+          rows="5"
+        ></textarea>
+
         <label class="form-label" for="product_img">Product Image URL</label>
         <input type="text" name="product_img" class="form-control" />
-        
+
         <label class="form-label" for="product_link">Product Link URL</label>
         <input type="text" name="product_link" class="form-control" />
       </div>
@@ -53,7 +70,7 @@
         <h2>Add Product Price</h2>
         <label class="form-label" for="starting_price">Starting Price</label>
         <input type="text" name="starting_price" class="form-control" />
-        
+
         <label class="form-label" for="price_range">Price Range</label>
         <input type="text" name="price_range" class="form-control" />
       </div>
@@ -61,7 +78,7 @@
         <h2>User Information</h2>
         <label class="form-label" for="username">Username</label>
         <input type="text" name="username" class="form-control" />
-        
+
         <label class="form-label" for="password">Password</label>
         <input type="password" name="password" class="form-control" />
       </div>

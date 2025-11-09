@@ -3,6 +3,7 @@ let mysql = require("mysql2");
 
 //import express
 let express = require("express");
+const path = require("path");
 
 //Initialize Express Application: Create an Express instance to manage the server.
 let app = express();
@@ -26,10 +27,10 @@ let connection = mysql.createConnection({
   // database: "mydb",
 
   //free online database
-  host: "sql5.freesqldatabase.com",
-  user: "sql5772871",
-  password: "WLdgdMHZKd",
-  database: "sql5772871",
+  host: "sql10.freesqldatabase.com",
+  user: "sql10806855",
+  password: "4r5wxcBxbG",
+  database: "sql10806855",
   port: "3306",
 });
 
@@ -50,221 +51,392 @@ app.get("/", function (request, response) {
 });
 
 //to create all 5 table
+// app.get("/install", (req, res) => {
+//   //write SQL query code,create table
+//   let ProductsTable = `create table if not exists Products(
+//    	Product_id int auto_increment primary key,
+//     product_name varchar(50) not null,
+//     product_url varchar(50) not null
+//   );
+//   `;
+//   //execute created table  query
+//   connection.query(ProductsTable, (error) => {
+//     if (error) {
+//       console.error("Products table is not created", error);
+//     } else {
+//       console.log("Products table is successfully created");
+//     }
+//   });
+//   let ProductDescriptionTable = `create table if not exists Product_Description(
+//   Description_id int auto_increment primary key,
+//   Product_id int,
+//   Product_brief_description varchar(255) not null,
+//   Product_description varchar(500) not null,
+//   Product_img varchar(255) not null,
+//   Product_link varchar(255) not null,
+//   foreign key(Product_id) references Products(Product_id)
+
+//   ) `;
+
+//   // execute product description table
+//   connection.query(ProductDescriptionTable, (error) => {
+//     if (error) {
+//       console.error("product table is not created", error);
+//     } else {
+//       console.log("product description table is successfully created");
+//     }
+//   });
+
+//   //price table
+//   let ProductPriceTable = `create table if not exists Product_Price(
+//    Price_id int auto_increment primary key,
+//    Product_id int,
+//    Starting_price varchar(100),
+//    Price_range varchar(100),
+//    foreign key (Product_id) references Products(product_id)
+// ) `;
+//   //
+//   connection.query(ProductPriceTable, (err) => {
+//     if (err) {
+//       console.error("product price table is not created", err);
+//     } else {
+//       console.log("product price table is successfully created");
+//     }
+//   });
+
+//   let userTable = `create table if not exists Users(
+//   user_id int auto_increment primary key ,
+//   User_name varchar(20) not null,
+//   User_password varchar(20) not null
+// )`;
+//   connection.query(userTable, (error) => {
+//     if (error) {
+//       console.log("user table is not created", error);
+//     } else {
+//       console.log("user table is successfully created");
+//     }
+//   });
+
+//   let orderTable = `create table if not exists Orders(
+//    order_id int auto_increment primary key,
+//    user_id int,
+//    Product_id int,
+//    foreign key (Product_id) references Products(Product_id), 
+//    foreign key (user_id) references Users(user_id)
+// )`;
+
+//   connection.query(orderTable, (err) => {
+//     if (err) {
+//       console.error("order table is not created", err);
+//     } else {
+//       console.log("order table is successfully created");
+//     }
+//   });
+
+//   res.send("Apple website table  is created ");
+// });
+
+
+
 app.get("/install", (req, res) => {
-  //write SQL query code,create table
-  let productsTable = `create table if not exists Products(
-   	Product_id int auto_increment primary key,
-    product_name varchar(50) not null,
-    product_url varchar(50) not null
-  );
+  // Ensure all tables use InnoDB (supports foreign keys)
+  let ProductsTable = `
+    CREATE TABLE IF NOT EXISTS Products(
+      Product_id INT AUTO_INCREMENT PRIMARY KEY,
+      product_name VARCHAR(50) NOT NULL,
+      product_url VARCHAR(50) NOT NULL
+    ) ENGINE=InnoDB;
   `;
-  //execute created table  query
-  connection.query(productsTable, (error) => {
+
+  connection.query(ProductsTable, (error) => {
     if (error) {
-      console.error("products table is not created", error);
+      console.error("Products table not created:", error);
     } else {
-      console.log("products table is successfully created");
+      console.log("✅ Products table created");
     }
   });
-  let ProductDescriptionTable = `create table if not exists Product_Description(
-  Description_id int auto_increment primary key,
-  Product_id int,
-  Product_brief_description varchar(255) not null,
-  Product_description varchar(500) not null,
-  Product_img varchar(255) not null,
-  Product_link varchar(255) not null,
-  foreign key(Product_id) references products(Product_id)
 
-  ) `;
+  let ProductDescriptionTable = `
+    CREATE TABLE IF NOT EXISTS Product_Description(
+      Description_id INT AUTO_INCREMENT PRIMARY KEY,
+      Product_id INT,
+      Product_brief_description VARCHAR(255) NOT NULL,
+      Product_description VARCHAR(500) NOT NULL,
+      Product_img VARCHAR(255) NOT NULL,
+      Product_link VARCHAR(255) NOT NULL,
+      FOREIGN KEY (Product_id) REFERENCES Products(Product_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+    ) ENGINE=InnoDB;
+  `;
 
-  // execute product description table
   connection.query(ProductDescriptionTable, (error) => {
     if (error) {
-      console.error("product table is not created", error);
+      console.error("❌ Product_Description table not created:", error);
     } else {
-      console.log("product description table is successfully created");
+      console.log("✅ Product_Description table created");
     }
   });
 
-  //price table
-  let ProductPriceTable = `create table if not exists Product_Price(
-   Price_id int auto_increment primary key,
-   Product_id int,
-   Starting_price varchar(100),
-   Price_range varchar(100),
-   foreign key (Product_id) references products(product_id)
-) `;
-  //
+  let ProductPriceTable = `
+    CREATE TABLE IF NOT EXISTS Product_Price(
+      Price_id INT AUTO_INCREMENT PRIMARY KEY,
+      Product_id INT,
+      Starting_price VARCHAR(100),
+      Price_range VARCHAR(100),
+      FOREIGN KEY (Product_id) REFERENCES Products(Product_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+    ) ENGINE=InnoDB;
+  `;
+
   connection.query(ProductPriceTable, (err) => {
     if (err) {
-      console.error("product price table is not created", err);
+      console.error("❌ Product_Price table not created:", err);
     } else {
-      console.log("product price table is successfully created");
+      console.log("✅ Product_Price table created");
     }
   });
 
-  let userTable = `create table if not exists Users(
-  user_id int auto_increment primary key ,
-  User_name varchar(20) not null,
-  User_password varchar(20) not null
-)`;
+  let userTable = `
+    CREATE TABLE IF NOT EXISTS Users(
+      user_id INT AUTO_INCREMENT PRIMARY KEY,
+      User_name VARCHAR(20) NOT NULL,
+      User_password VARCHAR(20) NOT NULL
+    ) ENGINE=InnoDB;
+  `;
+
   connection.query(userTable, (error) => {
     if (error) {
-      console.log("user table is not created", error);
+      console.log("❌ Users table not created:", error);
     } else {
-      console.log("user table is successfully created");
+      console.log("✅ Users table created");
     }
   });
 
-  let orderTable = `create table if not exists Orders(
-   order_id int auto_increment primary key,
-   user_id int,
-   Product_id int,
-   foreign key (Product_id) references Products(Product_id), 
-   foreign key (user_id) references Users(user_id)
-)`;
+  let orderTable = `
+    CREATE TABLE IF NOT EXISTS Orders(
+      order_id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT,
+      Product_id INT,
+      FOREIGN KEY (Product_id) REFERENCES Products(Product_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+      FOREIGN KEY (user_id) REFERENCES Users(user_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+    ) ENGINE=InnoDB;
+  `;
 
   connection.query(orderTable, (err) => {
     if (err) {
-      console.error("order table is not created", err);
+      console.error("❌ Orders table not created:", err);
     } else {
-      console.log("order table is successfully created");
+      console.log("✅ Orders table created");
     }
   });
 
-  res.send("Apple website table  is created ");
+  res.send("✅ All Apple website tables are created successfully!");
 });
+
 
 // to enter data with image url from internet
-app.post("/add-product", (req, res) => {
+// app.post("/add-product", (req, res) => {
+//   const {
+//     product_name,
+//     product_url,
+//     product_brief_description,
+//     product_description,
+//     product_link,
+//     product_img,
+//     starting_price,
+//     price_range,
+//     username,
+//     password,
+//   } = req.body;
+
+//   // Insert into Products table
+//   const insertIntoProducts = `INSERT INTO Products(product_name, product_url) VALUES (?, ?)`;
+//   connection.query(insertIntoProducts, [product_name, product_url], (err) => {
+//     if (err) {
+//       console.log(err);
+//       return res.status(500).send("Error inserting product");
+//     }
+
+//     console.log("Data inserted into Products table successfully");
+
+//     // Select last inserted Product_id
+//     const productIdQuery = `SELECT Product_id FROM Products ORDER BY Product_id DESC LIMIT 1`;
+//     connection.query(productIdQuery, (err, results) => {
+//       if (err) {
+//         console.log(err);
+//         return res.status(500).send("Error retrieving Product_id");
+//       }
+
+//       if (results.length > 0) {
+//         const product_Id = results[0].Product_id;
+
+//         // Insert into product_description table
+//         const insertIntoProductDesc = `INSERT INTO product_description(Product_id, Product_brief_description, Product_description, Product_img, Product_link) VALUES (?, ?, ?, ?, ?)`;
+//         connection.query(
+//           insertIntoProductDesc,
+//           [
+//             product_Id,
+//             product_brief_description,
+//             product_description,
+//             product_img,
+//             product_link,
+//           ],
+//           (err) => {
+//             if (err) {
+//               console.log(err);
+//             } else {
+//               console.log(
+//                 "Data inserted into product_description table successfully"
+//               );
+//             }
+//           }
+//         );
+
+//         // Insert into product_price table
+//         const insertIntoPrice = `INSERT INTO product_price(Product_id, Starting_price, Price_range) VALUES (?, ?, ?)`;
+//         connection.query(
+//           insertIntoPrice,
+//           [product_Id, starting_price, price_range],
+//           (err) => {
+//             if (err) {
+//               console.log(err);
+//             } else {
+//               console.log("Price information successfully inserted");
+//             }
+//           }
+//         );
+
+//         // Insert into users table
+//         const insertIntoUser = `INSERT INTO users(User_name, User_password) VALUES (?, ?)`;
+//         connection.query(insertIntoUser, [username, password], (error) => {
+//           if (error) {
+//             console.log(error);
+//           } else {
+//             console.log("User information inserted successfully");
+
+//             // Select last inserted user_id
+//             const userIdQuery = `SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1`;
+//             connection.query(userIdQuery, (err, userResults) => {
+//               if (err) {
+//                 console.log("Error selecting user_id", err);
+//               }
+
+//               if (userResults.length > 0) {
+//                 const user_Id = userResults[0].user_id;
+
+//                 // Insert into orders table
+//                 const insertIntoOrder = `INSERT INTO orders(user_id, Product_id) VALUES (?, ?)`;
+//                 connection.query(
+//                   insertIntoOrder,
+//                   [user_Id, product_Id],
+//                   (err) => {
+//                     if (err) {
+//                       console.log("Error inserting order data", err);
+//                     } else {
+//                       console.log("New order data inserted successfully");
+//                     }
+//                   }
+//                 );
+//               } else {
+//                 console.log("No user data found");
+//               }
+//             });
+//           }
+//         });
+//       } else {
+//         console.log("No product data found");
+//       }
+//     });
+//   });
+
+//   res.send("New product added successfully");
+// });
+app.post("/add-product", async (req, res) => {
   const {
-    product_name,
-    product_url,
-    product_brief_description,
-    product_description,
-    product_link,
-    product_img,
-    starting_price,
-    price_range,
-    username,
-    password,
+    product_name, product_url,
+    product_brief_description, product_description,
+    product_img, product_link,
+    starting_price, price_range,
+    username, password
   } = req.body;
 
-  // Insert into products table
-  const insertIntoProducts = `INSERT INTO products(product_name, product_url) VALUES (?, ?)`;
-  connection.query(insertIntoProducts, [product_name, product_url], (err) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).send("Error inserting product");
-    }
+  const bcrypt = require('bcrypt');
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-    console.log("Data inserted into products table successfully");
+  connection.beginTransaction(err => {
+    if (err) return res.status(500).send("Transaction start failed: " + err);
 
-    // Select last inserted Product_id
-    const productIdQuery = `SELECT Product_id FROM products ORDER BY Product_id DESC LIMIT 1`;
-    connection.query(productIdQuery, (err, results) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).send("Error retrieving Product_id");
-      }
+    // Insert into Products (note uppercase P)
+    connection.query(
+      "INSERT INTO Products(product_name, product_url) VALUES (?, ?)",
+      [product_name, product_url],
+      (err, productResult) => {
+        if (err) return connection.rollback(() => res.status(500).send(err));
+        const productId = productResult.insertId;
 
-      if (results.length > 0) {
-        const product_Id = results[0].Product_id;
-
-        // Insert into product_description table
-        const insertIntoProductDesc = `INSERT INTO product_description(Product_id, Product_brief_description, Product_description, Product_img, Product_link) VALUES (?, ?, ?, ?, ?)`;
+        // Insert into Product_Description (note exact table name)
         connection.query(
-          insertIntoProductDesc,
-          [
-            product_Id,
-            product_brief_description,
-            product_description,
-            product_img,
-            product_link,
-          ],
+          "INSERT INTO Product_Description(Product_id, Product_brief_description, Product_description, Product_img, Product_link) VALUES (?, ?, ?, ?, ?)",
+          [productId, product_brief_description, product_description, product_img, product_link],
           (err) => {
-            if (err) {
-              console.log(err);
-            } else {
-              console.log(
-                "Data inserted into product_description table successfully"
-              );
-            }
-          }
-        );
+            if (err) return connection.rollback(() => res.status(500).send(err));
 
-        // Insert into product_price table
-        const insertIntoPrice = `INSERT INTO product_price(Product_id, Starting_price, Price_range) VALUES (?, ?, ?)`;
-        connection.query(
-          insertIntoPrice,
-          [product_Id, starting_price, price_range],
-          (err) => {
-            if (err) {
-              console.log(err);
-            } else {
-              console.log("Price information successfully inserted");
-            }
-          }
-        );
+            // Insert into Product_Price
+            connection.query(
+              "INSERT INTO Product_Price(Product_id, Starting_price, Price_range) VALUES (?, ?, ?)",
+              [productId, starting_price, price_range],
+              (err) => {
+                if (err) return connection.rollback(() => res.status(500).send(err));
 
-        // Insert into users table
-        const insertIntoUser = `INSERT INTO users(User_name, User_password) VALUES (?, ?)`;
-        connection.query(insertIntoUser, [username, password], (error) => {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log("User information inserted successfully");
-
-            // Select last inserted user_id
-            const userIdQuery = `SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1`;
-            connection.query(userIdQuery, (err, userResults) => {
-              if (err) {
-                console.log("Error selecting user_id", err);
-              }
-
-              if (userResults.length > 0) {
-                const user_Id = userResults[0].user_id;
-
-                // Insert into orders table
-                const insertIntoOrder = `INSERT INTO orders(user_id, Product_id) VALUES (?, ?)`;
+                // Insert into Users
                 connection.query(
-                  insertIntoOrder,
-                  [user_Id, product_Id],
-                  (err) => {
-                    if (err) {
-                      console.log("Error inserting order data", err);
-                    } else {
-                      console.log("New order data inserted successfully");
-                    }
+                  "INSERT INTO Users(User_name, User_password) VALUES (?, ?)",
+                  [username, hashedPassword],
+                  (err, userResult) => {
+                    if (err) return connection.rollback(() => res.status(500).send(err));
+                    const userId = userResult.insertId;
+
+                    // Insert into Orders
+                    connection.query(
+                      "INSERT INTO Orders(user_id, Product_id) VALUES (?, ?)",
+                      [userId, productId],
+                      (err) => {
+                        if (err) return connection.rollback(() => res.status(500).send(err));
+
+                        // Commit transaction
+                        connection.commit(err => {
+                          if (err) return connection.rollback(() => res.status(500).send(err));
+                          res.send("✅ Product and order added successfully!");
+                        });
+                      }
+                    );
                   }
                 );
-              } else {
-                console.log("No user data found");
               }
-            });
+            );
           }
-        });
-      } else {
-        console.log("No product data found");
+        );
       }
-    });
+    );
   });
-
-  res.send("New product added successfully");
 });
 
-//select data from products when the request url is /iPhone
+
+
+//select data from Products when the request url is /iPhone
 app.get("/iPhone", (req, res) => {
   // Select Product_id
   const SelectAll = `SELECT *
-FROM products
-JOIN product_description ON products.Product_id = product_description.Product_id
-JOIN product_price ON products.Product_id = product_price.Product_id`;
+FROM Products
+JOIN product_description ON Products.Product_id = product_description.Product_id
+JOIN product_price ON Products.Product_id = product_price.Product_id`;
 
   connection.query(SelectAll, (err, rows) => {
-    let iphone = { products: [] };
+    let iphone = { Products: [] };
     // console.log(rows);
-    iphone.products = rows;
+    iphone.Products = rows;
     var stringIphone = JSON.stringify(iphone);
     if (!err) {
       // console.log(stringIphone);
@@ -282,10 +454,10 @@ app.get("/iPhone/:ProductId", (req, res) => {
   // Query to fetch a single product
   const query = `
     SELECT *
-    FROM products
-    JOIN product_description ON products.Product_id = product_description.Product_id
-    JOIN product_price ON products.Product_id = product_price.Product_id
-    WHERE products.Product_id = ?`;
+    FROM Products
+    JOIN product_description ON Products.Product_id = product_description.Product_id
+    JOIN product_price ON Products.Product_id = product_price.Product_id
+    WHERE Products.Product_id = ?`;
 
   connection.query(query, [ProductId], (err, rows) => {
     if (err) {
