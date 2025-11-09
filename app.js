@@ -148,7 +148,123 @@ app.get("/install", (req, res) => {
 });
 
 
+// to enter data with image url from internet
+// app.post("/add-product", (req, res) => {
+//   const {
+//     product_name,
+//     product_url,
+//     product_brief_description,
+//     product_description,
+//     product_link,
+//     product_img,
+//     starting_price,
+//     price_range,
+//     username,
+//     password,
+//   } = req.body;
 
+//   // Insert into Products table
+//   const insertIntoProducts = `INSERT INTO Products(product_name, product_url) VALUES (?, ?)`;
+//   connection.query(insertIntoProducts, [product_name, product_url], (err) => {
+//     if (err) {
+//       console.log(err);
+//       return res.status(500).send("Error inserting product");
+//     }
+
+//     console.log("Data inserted into Products table successfully");
+
+//     // Select last inserted Product_id
+//     const productIdQuery = `SELECT Product_id FROM Products ORDER BY Product_id DESC LIMIT 1`;
+//     connection.query(productIdQuery, (err, results) => {
+//       if (err) {
+//         console.log(err);
+//         return res.status(500).send("Error retrieving Product_id");
+//       }
+
+//       if (results.length > 0) {
+//         const product_Id = results[0].Product_id;
+
+//         // Insert into product_description table
+//         const insertIntoProductDesc = `INSERT INTO product_description(Product_id, Product_brief_description, Product_description, Product_img, Product_link) VALUES (?, ?, ?, ?, ?)`;
+//         connection.query(
+//           insertIntoProductDesc,
+//           [
+//             product_Id,
+//             product_brief_description,
+//             product_description,
+//             product_img,
+//             product_link,
+//           ],
+//           (err) => {
+//             if (err) {
+//               console.log(err);
+//             } else {
+//               console.log(
+//                 "Data inserted into product_description table successfully"
+//               );
+//             }
+//           }
+//         );
+
+//         // Insert into product_price table
+//         const insertIntoPrice = `INSERT INTO product_price(Product_id, Starting_price, Price_range) VALUES (?, ?, ?)`;
+//         connection.query(
+//           insertIntoPrice,
+//           [product_Id, starting_price, price_range],
+//           (err) => {
+//             if (err) {
+//               console.log(err);
+//             } else {
+//               console.log("Price information successfully inserted");
+//             }
+//           }
+//         );
+
+//         // Insert into users table
+//         const insertIntoUser = `INSERT INTO users(User_name, User_password) VALUES (?, ?)`;
+//         connection.query(insertIntoUser, [username, password], (error) => {
+//           if (error) {
+//             console.log(error);
+//           } else {
+//             console.log("User information inserted successfully");
+
+//             // Select last inserted user_id
+//             const userIdQuery = `SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1`;
+//             connection.query(userIdQuery, (err, userResults) => {
+//               if (err) {
+//                 console.log("Error selecting user_id", err);
+//               }
+
+//               if (userResults.length > 0) {
+//                 const user_Id = userResults[0].user_id;
+
+//                 // Insert into orders table
+//                 const insertIntoOrder = `INSERT INTO orders(user_id, Product_id) VALUES (?, ?)`;
+//                 connection.query(
+//                   insertIntoOrder,
+//                   [user_Id, product_Id],
+//                   (err) => {
+//                     if (err) {
+//                       console.log("Error inserting order data", err);
+//                     } else {
+//                       console.log("New order data inserted successfully");
+//                     }
+//                   }
+//                 );
+//               } else {
+//                 console.log("No user data found");
+//               }
+//             });
+//           }
+//         });
+//       } else {
+//         console.log("No product data found");
+//       }
+//     });
+//   });
+
+//   res.send("New product added successfully");
+// });
 app.post("/add-product", async (req, res) => {
   const {
     product_name, product_url,
@@ -223,47 +339,50 @@ app.post("/add-product", async (req, res) => {
 
 //select data from Products when the request url is /iPhone
 app.get("/iPhone", (req, res) => {
-  const SelectAll = `
-    SELECT *
-    FROM Products
-    JOIN Product_Description ON Products.Product_id = Product_Description.Product_id
-    JOIN Product_Price ON Products.Product_id = Product_Price.Product_id
-  `;
+  // Select Product_id
+  const SelectAll = `SELECT *
+FROM Products
+JOIN product_description ON Products.Product_id = product_description.Product_id
+JOIN product_price ON Products.Product_id = product_price.Product_id`;
 
   connection.query(SelectAll, (err, rows) => {
-    if (err) {
-      console.error("Error happened:", err);
-      return res.status(500).send("Database Error");
+    let iphone = { Products: [] };
+    // console.log(rows);
+    iphone.Products = rows;
+    var stringIphone = JSON.stringify(iphone);
+    if (!err) {
+      // console.log(stringIphone);
+      res.end(stringIphone);
+    } else {
+      console.log("error happened");
     }
-    res.json({ Products: rows });
   });
 });
-
 
 //to test
 app.get("/iPhone/:ProductId", (req, res) => {
   const ProductId = req.params.ProductId;
 
+  // Query to fetch a single product
   const query = `
     SELECT *
     FROM Products
-    JOIN Product_Description ON Products.Product_id = Product_Description.Product_id
-    JOIN Product_Price ON Products.Product_id = Product_Price.Product_id
-    WHERE Products.Product_id = ?
-  `;
+    JOIN product_description ON Products.Product_id = product_description.Product_id
+    JOIN product_price ON Products.Product_id = product_price.Product_id
+    WHERE Products.Product_id = ?`;
 
   connection.query(query, [ProductId], (err, rows) => {
     if (err) {
-      console.error("Error fetching product:", err);
-      return res.status(500).send("Server Error");
+      console.log("Error fetching product:", err);
+      res.status(500).send("Server Error");
+    } else if (rows.length === 0) {
+      res.status(404).send("Product not found");
+    } else {
+      console.log(ProductId);
+      res.json(rows[0]); // Assuming there's only one result
     }
-    if (rows.length === 0) {
-      return res.status(404).send("Product not found");
-    }
-    res.json(rows[0]);
   });
 });
-
 
 //connect created server with port number for image URL
 app.listen(1234, (err) => {
