@@ -342,8 +342,8 @@ app.get("/iPhone", (req, res) => {
   // Select Product_id
   const SelectAll = `SELECT *
 FROM Products
-JOIN product_description ON Products.Product_id = product_description.Product_id
-JOIN product_price ON Products.Product_id = product_price.Product_id`;
+JOIN  Product_Description ON Products.Product_id =  Product_Description.Product_id
+JOIN Product_Price ON Products.Product_id = Product_Price.Product_id`;
 
   connection.query(SelectAll, (err, rows) => {
     let iphone = { Products: [] };
@@ -351,7 +351,7 @@ JOIN product_price ON Products.Product_id = product_price.Product_id`;
     iphone.Products = rows;
     var stringIphone = JSON.stringify(iphone);
     if (!err) {
-      // console.log(stringIphone);
+      console.log(stringIphone);
       res.end(stringIphone);
     } else {
       console.log("error happened");
@@ -367,8 +367,8 @@ app.get("/iPhone/:ProductId", (req, res) => {
   const query = `
     SELECT *
     FROM Products
-    JOIN product_description ON Products.Product_id = product_description.Product_id
-    JOIN product_price ON Products.Product_id = product_price.Product_id
+    JOIN Product_Description ON Products.Product_id = Product_Description.Product_id
+    JOIN Product_Price ON Products.Product_id = Product_Price.Product_id
     WHERE Products.Product_id = ?`;
 
   connection.query(query, [ProductId], (err, rows) => {
